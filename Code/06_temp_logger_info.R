@@ -1,0 +1,89 @@
+### checking logger info
+
+library(tidylog)
+library(tidyverse)
+library(sf)
+library(mapview)
+library(nhdplusTools)
+
+
+# logger data -------------------------------------------------------------
+
+sites <- st_read("/Users/katieirving/Library/CloudStorage/OneDrive-SharedLibraries-SCCWRP/San Gabriel and Santa Clara Temp Effects - Documents/General/Data/Maps/shapefiles and map objects/watertempdata_all_merged.shp")
+sites
+
+### list sites and join 
+
+setwd("/Users/katieirving/Library/CloudStorage/OneDrive-SharedLibraries-SCCWRP/San Gabriel and Santa Clara Temp Effects - Documents/General/Data/Maps/LatLong csv files")
+
+# h <- list.files(pattern="watertempdata")
+# length(h) ## 10
+# 
+# 
+# ## get one file for format
+# 
+# TempDatax <- read.csv(h[3], sep="")
+# TempDatax
+# 
+# ## remove file
+# 
+# h <- h[-c(3,4)]
+# h
+# n
+# 
+# h[n]
+# 
+# for(n in 1:length(h)) {
+#   
+#   TempData <- read.csv(h[n], sep="") 
+#     # mutate(access.comments = as.character(access.comments))
+#   head(TempData)
+#   
+#   TempDatax <- bind_rows(TempDatax, TempData)
+#   
+# }
+
+data1 <- read.csv("watertempdata_CEDEC.csv")
+data2 <- read.csv("watertempdata_FishAndWildlife.csv")
+data3 <- read.csv("watertempdata_RB9.csv")
+data4 <- read.csv("watertempdata_SDAM.csv")
+data5 <- read.csv("watertempdata_SOCHistorical.csv")
+data6 <- read.csv("watertempdata_StreamTemp_ALL.csv")
+data7 <- read.csv("watertempdata_USCR.csv")
+data8 <- read.csv("watertempdata_USGS.csv") %>%
+  mutate(start.year = as.integer(start.year),
+         end.year = as.integer(end.year))
+
+df <- bind_rows(data1,data2,data3,data4,data5,data6,data7,data8)
+
+head(df)
+
+# Map ---------------------------------------------------------------------
+
+## make spatial
+
+dfSp <- df %>%
+  drop_na(Latitude) %>%
+  st_as_sf(coords=c("Longitude", "Latitude"), crs=4326, remove=F) 
+
+## map of all sites in state
+# set background basemaps:
+basemapsList <- c("Esri.WorldTopoMap", "Esri.WorldImagery",
+                  "Esri.NatGeoWorldMap",
+                  "OpenTopoMap", "OpenStreetMap", 
+                  "CartoDB.Positron", "Stamen.TopOSMFeatures")
+
+mapviewOptions(basemaps=basemapsList, fgb = FALSE)
+
+
+
+# this map of all sites in same HUC 12
+m1 <- mapview(dfSp, cex=2, col.regions=c("red"),
+              layer.name="Temp Sites") 
+
+
+m1
+# m1@map %>% leaflet::addMeasure(primaryLengthUnit = "meters")
+
+mapshot(m1, url = paste0(getwd(), "/output_data/01_bio_sites_socal_counties_mapview.html"),
+        file = paste0(getwd(), "/ignore/01_bio_sites_socal_counties_mapview.png"))
