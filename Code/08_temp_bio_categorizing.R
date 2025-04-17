@@ -66,7 +66,7 @@ allbio <- bind_rows(csci, asci)
 
 # Upload modelled stream temp ---------------------------------------------
 
-load("/Users/katieirving/OneDrive - SCCWRP/Documents - Katie’s MacBook Pro/Projects/San_Gabriel_Temp/Data/AirTemp/Modeling/baseline_stream_temp.RData")
+load("ignore/baseline_stream_temp.RData")
 
 baseline_stream_temp <- baseline_stream_temp %>% ungroup() %>%
   pivot_longer(Max_Wkly_Mean_StreamT:Mean_Wkl_Rng_StreamT, names_to = "Mets", values_to = "Vals") %>%

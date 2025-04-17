@@ -6,6 +6,8 @@ library(sf)
 library(zoo)
 library(scales)
 
+getwd()
+setwd("/Users/katieirving/Library/CloudStorage/OneDrive-SCCWRP/Documents - Katie’s MacBook Pro/git/SGR_regional_temp_curves/")
 ## workflow
 ## get temp data
 ## make metrics
@@ -93,7 +95,7 @@ write.csv(df_sums, "output_data/07_temp_means_per_site_year_SCCWRP.csv")
 ## plot temps
 
 library(ggthemes)
-
+df_sums
 ## plots don't work with just year!
 ## plot by site
 T1 <- ggplot(df_sums, aes(y = TempF, x = Year, group = Metric, color = Metric)) +
@@ -142,10 +144,10 @@ ggsave(T2, filename=file.name1, dpi=300, height=5, width=6)
 # Heal The Bay Data -------------------------------------------------------
 
 ## upload data and make longer - from SGR temp script  temp_data_v4
-HLBData <- read.csv("/Users/katieirving/Library/CloudStorage/OneDrive-SCCWRP/Documents - Katie’s MacBook Pro/git/SGR_Temp_Benthic/input_data/Temperature/temp/means_per_sites_month.csv") %>%
+HLBData <- read.csv("ignore/Temperature/temp/means_per_sites_month.csv") %>%
   select(-c(X)) %>%
   pivot_longer(DTR:min_07da, names_to = "Metric", values_to = "Temp") %>%
-  group_by(SiteName, Metric, Year) %>%
+  group_by(SiteName, Metric, Year, Month) %>%
   summarise(Temp = mean(na.omit(Temp))) %>%
   ## make factors of month and metric
   mutate(Metric = factor(Metric, levels = c("max_07da", "mean_07da", "min_07da", "MeanTemp", "MinTemp", "MaxTemp", "DTR"))) %>%
@@ -221,12 +223,6 @@ years <- bios %>%
   distinct() 
 
 
-years %>%
-  group_by(masterid) %>%
-  length(unique(Month))
-
-years
-
 unique(bios$county)
 
 ## summarise daily statistics
@@ -253,7 +249,7 @@ df_sumsSMC <- dfs %>%
   # mutate(SiteName = factor(siteName, levels = c("Burbank", "Rattlesnake", "Benedict", "Steelhead", "Riverfront",
   #                                               "Compton", "Willow"))) %>%
   pivot_longer(MeanTemp:DTR, names_to = "Metric", values_to= "Values")%>%
-  group_by(masterid, Metric, Year, Comid,latitude, longitude) %>%
+  group_by(masterid, Metric, Year, Comid,latitude, longitude, Month) %>%
   summarise(Temp = mean(na.omit(Values))) %>%
   # mutate(Month = factor(Month, levels = c(01,02,03,04,05,06,07,08,09,10,11)),
   #        Metric = factor(Metric, levels = c("max_07da", "mean_07da", "min_07da", "MeanTemp", "MinTemp", "MaxTemp", "DTR"))) %>%
@@ -273,7 +269,7 @@ T5 <- ggplot(df_sumsSMC, aes(y = TempF, x = Month, group = Metric, color = Metri
   # geom_line(aes(y=AirTemp, col = "gray")) +
   geom_line() +
   # geom_line(aes(x=Date, y=AirTemp, color = "Max Daily Air Temp")) +
-  facet_wrap(~masterid) + ## , scales = "free_x"
+  facet_wrap(~SiteName) + ## , scales = "free_x"
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   scale_y_continuous(name="Water Temp (°F)") +
   scale_color_brewer(palette= "Set2",
@@ -354,17 +350,17 @@ allTempComs <- bind_rows(allTempComs, df_sumsSMC)
 
 ## bugs - sites only
 
-bugSites <- st_read("output_data/01_bio_sites_all.shp")
+bugSites <- st_read("ignore/output/01_bio_sites_all.shp")
 head(bugSites)
 
 ## bugs data
 
-csciScores <- read.csv("ignore/01_csci_comp_mets_comid_socal.csv")
+csciScores <- read.csv("ignore/output/01_csci_comp_mets_comid_socal.csv")
 head(csciScores)
 
 ### algae scores
 
-asciScores <- read.csv("ignore/01_asci_comp_mets_comid_socal.csv")
+asciScores <- read.csv("ignore/output/01_asci_comp_mets_comid_socal.csv")
 head(asciScores)
 
 ## how many csci sites match comids with temp data
@@ -481,12 +477,13 @@ names(allTempComs)
 
 maxTemp <- allTempComs %>%
   select(-c(latitude:longitude)) %>%
-  filter(Metric == "max_07da") %>%
+  # filter(Metric == "max_07da") %>%
   select(-Metric) %>%
   distinct() %>%
   rename(Max_Wkl_Max_StreamT = TempF) %>% ## change to match model
   drop_na(Max_Wkl_Max_StreamT) 
 
+maxTemp
 ## define values to predict on
 tempvalues <- maxTemp$Max_Wkl_Max_StreamT
 tempvalues
@@ -495,11 +492,11 @@ tempvalues
 ## CSCI
 
 ## look up table
-load(file="output_data/03_csci_glm_rsqds.RData")
+load(file="ignore/models/03_csci_glm_rsqds.RData")
 bio_h_summary
 
 ## models
-load(file = "output_data/03_csci_glm_currentTemp.RData")
+load(file = "ignore/models/03_csci_glm_currentTemp.RData")
 log.lm
 
 ## which models are max weekly temp?
@@ -537,11 +534,11 @@ maxTempC
 ### ASCI
 
 ## look up table
-load(file="output_data/03_asci_glm_rsqds.RData")
+load(file="ignore/models/03_asci_glm_rsqds.RData")
 bio_h_summary
 
 ## models
-load(file = "output_data/03_asci_glm_currentTemp.RData")
+load(file = "ignore/models/03_asci_glm_currentTemp.RData")
 log.lm
 
 ## modified threshold
@@ -603,7 +600,7 @@ allResults <- read.csv("output_data/07_predictions_csci_asci_observed_temp.csv")
                                 BioMetric == "csci" & Type == "Standard" ~ 0.79,
                                   BioMetric == "ASCI_Hybrid" & Type == "Modified" ~ 0.75,
                                     BioMetric == "ASCI_Hybrid" & Type == "Standard" ~ 0.86))
-
+allResultsx
 ## scale the metric values to 1 to compare with probability
 ## also match probability with bio metric score
 allResultsx <- allResults %>% 
@@ -622,9 +619,10 @@ range(allResultsx$BioYear) ## 2005 2020
 
 allResultsSub <- allResultsx %>%
   mutate(YearDiff = TempYear - BioYear) %>% ## get difference between years
-  filter(!YearDiff > 0) %>% ## remove any with greater than 3 years difference
+  # filter(!YearDiff > 0) %>% ## remove any with greater than 3 years difference
   mutate(YearDiff = as.factor(YearDiff))
 
+allResultsSub
 
 ### plot
 
@@ -645,7 +643,7 @@ unique(allResultsSub$masterid)
 # Spatial  ----------------------------------------------------------------
 
 ## bug sites with coords
-bugSites <- st_read("output_data/01_bio_sites_all.shp")
+bugSites <- st_read("ignore/output/01_bio_sites_all.shp")
 head(bugSites)
 
 sitesSub <- inner_join(bugSites, allResultsSub, by = "masterid") %>%

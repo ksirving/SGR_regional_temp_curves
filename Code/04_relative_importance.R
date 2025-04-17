@@ -16,7 +16,7 @@ source("Code/functions/My.gbm.step.R")
 
 ## upload data
 
-load(file="ignore/03_bugs_temp_joined_by_year.RData")
+load(file="ignore/output/03_bugs_temp_joined_by_year.RData")
 head(AllData)
 ## format for model
 names(data)
@@ -119,7 +119,7 @@ gbm_final_step <- function(
 
 gbm_final_step
 # set up filename for best model outputs
-(gbm_best_file <- paste0("output_data/04_gbm_final_csci_model_output.txt"))
+(gbm_best_file <- paste0("ignore/models/04_gbm_final_csci_model_output.txt"))
 
 # run best option with PURR
 capture.output(gbm_fin_out <- purrr::pmap(
@@ -141,7 +141,7 @@ cat("\nBest parameters for GBM.STEP:\n\n",
     file = gbm_best_file, append=TRUE)
 
 # add the parameters used to run the model
-write.csv(hyper_best, "output_data/04_best_model_csci_output.csv")
+write.csv(hyper_best, "ignore/models/04_best_model_csci_output.csv")
 
 # % percent explained
 (gbm_fin_out$self.statistics$mean.null - gbm_fin_out$cv.statistics$deviance.mean) / gbm_fin_out$self.statistics$mean.null 
@@ -157,12 +157,12 @@ assign(x = tolower(paste0("gbm_final_csci")), value=gbm_fin_out)
 (fileToSave <- ls(pattern = paste0("gbm_final_csci")))
 
 # save to RDS
-write_rds(x = get(fileToSave), path = paste0("output_data/04_",fileToSave, "_model.rds"), compress = "gz")
+write_rds(x = get(fileToSave), path = paste0("ignore/models/04_",fileToSave, "_model.rds"), compress = "gz")
 
 # Save all the datasets used in the model:
-save(list = ls(pattern="data_"), file = tolower(paste0("output_data/04_",fileToSave,"_model_data.rda")))
+save(list = ls(pattern="data_"), file = tolower(paste0("ignore/models/04_",fileToSave,"_model_data.rda")))
 
-gbm_final <- read_rds("output_data/04_gbm_final_csci_model.rds")
+gbm_final <- read_rds("ignore/models/04_gbm_final_csci_model.rds")
 class(gbm_final)
 
 gbm_fin_RI<-as.data.frame(summary(gbm_final, plotit = F, method=relative.influence)) 
@@ -180,7 +180,7 @@ gbm_fin_RI
 # Plots and metrics-------------------------------------------------------------------
 
 
-write.csv(gbm_fin_RI, "output_data/04_rel_imp_csci_labels.csv")
+write.csv(gbm_fin_RI, "ignore/output/04_rel_imp_csci_labels.csv")
 
 
 ggplot(data=gbm_fin_RI, aes(x=reorder(var,-rel.inf), y=rel.inf, fill = var)) +
@@ -204,7 +204,7 @@ set.seed(321) # reproducibility
 
 ## upload data
 
-load(file="ignore/03_algae_temp_joined_by_year.RData")
+load(file="ignore/output/03_algae_temp_joined_by_year.RData")
 head(AllDataA)
 ## fiormat for models
 names(data)
@@ -303,7 +303,7 @@ gbm_final_step <- function(
 }
 
 # set up filename for best model outputs
-(gbm_best_file <- paste0("output_data/04_gbm_final_asci_model_output.txt"))
+(gbm_best_file <- paste0("ignore/models/04_gbm_final_asci_model_output.txt"))
 
 # run best option with PURR
 capture.output(gbm_fin_out <- purrr::pmap(
@@ -325,7 +325,7 @@ cat("\nBest parameters for GBM.STEP:\n\n",
     file = gbm_best_file, append=TRUE)
 
 # add the parameters used to run the model
-write.csv(hyper_best, "output_data/04_best_model_asci_output.csv")
+write.csv(hyper_best, "ignore/models/04_best_model_asci_output.csv")
 
 # % percent explained
 (gbm_fin_out$self.statistics$mean.null - gbm_fin_out$cv.statistics$deviance.mean) / gbm_fin_out$self.statistics$mean.null 
@@ -340,13 +340,14 @@ assign(x = tolower(paste0("gbm_final_asci")), value=gbm_fin_out)
 # get file name
 (fileToSave <- ls(pattern = paste0("gbm_final_asci")))
 
+
 # save to RDS
-write_rds(x = get(fileToSave), path = paste0("output_data/04_",fileToSave, "_model.rds"), compress = "gz")
+write_rds(x = get(fileToSave), path = paste0("ignore/models/04_",fileToSave, "_model.rds"), compress = "gz")
 
 # Save all the datasets used in the model:
-save(list = ls(pattern="data_"), file = tolower(paste0("output_data/04_",fileToSave,"_model_data.rda")))
+save(list = ls(pattern="data_"), file = tolower(paste0("ignore/models/04_",fileToSave,"_model_data.rda")))
 
-gbm_final <- read_rds("output_data/04_gbm_final_asci_model.rds")
+gbm_final <- read_rds("ignore/models/04_gbm_final_asci_model.rds")
 class(gbm_final)
 
 gbm_fin_RI<-as.data.frame(summary(gbm_final, plotit = F, method=relative.influence)) 
@@ -364,7 +365,7 @@ gbm_fin_RI
 
 ## combine with rel importance
 
-write.csv(gbm_fin_RI, "output_data/04_rel_imp_asci_labels.csv")
+write.csv(gbm_fin_RI, "ignore/output/04_rel_imp_asci_labels.csv")
 
 ## plot
 ggplot(data=gbm_fin_RI, aes(x=reorder(var,-rel.inf), y=rel.inf, fill = var)) +
@@ -380,11 +381,11 @@ gbm_fin_RI
 
 library(tidyverse)
 
-out.dir <- "/Users/katieirving/OneDrive - SCCWRP/Documents - Katie’s MacBook Pro/git/SGR_Temp_Benthic_v2/Figures/"
+out.dir <- "Figures/"
 
 ### upload rel importance
-gbm_fin_RI_csci <- read.csv("output_data/04_rel_imp_csci_labels.csv")
-gbm_fin_RI_asci <- read.csv("output_data/04_rel_imp_asci_labels.csv")
+gbm_fin_RI_csci <- read.csv("ignore/output/04_rel_imp_csci_labels.csv")
+gbm_fin_RI_asci <- read.csv("ignore/output/04_rel_imp_asci_labels.csv")
 
 gbm_fin_RI_csci <- gbm_fin_RI_csci %>%
   mutate(Index = "CSCI")
@@ -435,7 +436,7 @@ head(all_rf)
 all_rf <- all_rf %>%
   select(var, Flow.Metric.Name, Flow.Component, CSCI, ASCI)
 
-write.csv(all_rf, "output_data/Manuscript/06_relative_imp_table.csv")
+write.csv(all_rf, "ignore/output/06_relative_imp_table.csv")
 
 
 

@@ -3,7 +3,6 @@
 
 library(tidyverse)
 library(sf)
-
 library(tidylog)
 
 out.dir <- "Figures/"

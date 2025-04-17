@@ -4,12 +4,12 @@ library(tidylog)
 library(tidyverse)
 library(sf)
 
-out.dir <- "/Users/katieirving/OneDrive - SCCWRP/Documents - Katie’s MacBook Pro/git/SGR_Temp_Benthic_v2/Figures/"
+out.dir <- "Figures/"
 
 # Temp data ---------------------------------------------------------------
 
 ## modelled current data
-load("/Users/katieirving/OneDrive - SCCWRP/Documents - Katie’s MacBook Pro/Projects/San_Gabriel_Temp/Data/AirTemp/Modeling/baseline_stream_temp.RData")
+load("ignore/baseline_stream_temp.RData")
 
 # baseline_stream_tempx <- baseline_stream_temp %>% 
 #   ungroup() %>%
@@ -30,7 +30,7 @@ head(baseline_stream_temp)
 
 # alteration
 
-load(file = "ignore/02_cur_ref_temps_not_matching_metrics_alteration.RData")
+load(file = "ignore/output/02_cur_ref_temps_not_matching_metrics_alteration.RData")
 head(AllTempAlt)
 
 ## convert to fahrenheit
@@ -50,10 +50,10 @@ dim(oe_ca)
 
 speciesList <- unique(oe_ca$otu)
 
-write.csv(speciesList, "output_data/03_csci_species_list.csv")
+write.csv(speciesList, "ignore/output/03_csci_species_list.csv")
 ## bug data
 
-bugs2 <- st_read("output_data/01_bio_sites_all.shp")
+bugs2 <- st_read("ignore/output/01_bio_sites_all.shp")
 head(bugs2)
 dim(bugs2)
 
@@ -203,8 +203,8 @@ ggsave(c2, filename=file.name1, dpi=300, height=5, width=7.5)
 
 
 ## save out
-write.csv(oe, "output_data/03_ObsExp_all_CA.csv")
-write.csv(oeCats, "output_data/03_ObsExp_traits_all_CA.csv")
+write.csv(oe, "ignore/output/03_ObsExp_all_CA.csv")
+write.csv(oeCats, "ignore/output/03_ObsExp_traits_all_CA.csv")
 
 # Join with Temp ----------------------------------------------------------
 
@@ -393,7 +393,7 @@ quad.lm <-lapply(1:nrow(bio_h_summary), function(i)
 bio_h_summary
 quad.lm 
 ## save models
-save(quad.lm, file = "output_data/03_csci_traits_mods_lm_quad.RData")
+save(quad.lm, file = "ignore/models/03_csci_traits_mods_lm_quad.RData")
 
 ## function to get p value from lm 
 lmp <- function (modelobject) {
@@ -413,7 +413,7 @@ for(i in 1:length(quad.lm)) {
   
 }
 ## save configs and r sqds
-save(bio_h_summary, file="output_data/03_asci_component_mods_quadLM_rsqds.RData")
+save(bio_h_summary, file="ignore/models/03_asci_component_mods_quadLM_rsqds.RData")
 
 ## make df of predicted values to predict on - need to be different for each temp metric
 
@@ -458,7 +458,7 @@ for(i in 1:length(quad.lm)) {
 }
 DF
 ## save predicted values
-save(DF, file="output_data/03_csci_traits_QuadLM_predVals.RData")
+save(DF, file="ignore/output/03_csci_traits_QuadLM_predVals.RData")
 
 ### predicted figures
 

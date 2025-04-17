@@ -6,12 +6,12 @@ library(tidylog)
 library(tidyverse)
 library(sf)
 
-out.dir <- "/Users/katieirving/OneDrive - SCCWRP/Documents - Katie’s MacBook Pro/git/SGR_Temp_Benthic_v2/Figures/"
+out.dir <- "Figures/"
 
 
 # Temp data ---------------------------------------------------------------
 
-load(file = "ignore/02_cur_temp_alt_mets.RData")
+load(file = "ignore/output/02_cur_temp_alt_mets.RData")
 head(AllTempAlt)
 
 ## get comids
@@ -22,7 +22,7 @@ range(AllTempAlt$year) ## 1982 2014
 
 ## channel engineering data
 
-BioEng <- read.csv("ignore/02_chan_eng.csv") %>%
+BioEng <- read.csv("ignore/output/02_chan_eng.csv") %>%
   select(-c(X,channel_engineering_classification_date, channel_engineering_personnel, channel_engineering_comments)) %>%
   mutate(Class2 = ifelse(channel_engineering_class =="NAT", "Natural", "Modified"))
 
@@ -30,17 +30,17 @@ BioEng <- read.csv("ignore/02_chan_eng.csv") %>%
 
 ##  sites only
 
-bugSites <- st_read("output_data/01_bio_sites_all.shp")
+bugSites <- st_read("ignore/output/01_bio_sites_all.shp")
 head(bugSites)
 
 ## bugs data
 
-csciScores <- read.csv("ignore/01_csci_comp_mets_comid_socal.csv")
+csciScores <- read.csv("ignore/output/01_csci_comp_mets_comid_socal.csv")
 head(csciScores)
 
 ### algae scores
 
-asciScores <- read.csv("ignore/01_asci_comp_mets_comid_socal.csv")
+asciScores <- read.csv("ignore/output/01_asci_comp_mets_comid_socal.csv")
 head(asciScores)
 
 
@@ -99,14 +99,14 @@ meancsci <- AllData %>%
 meancsci
 
 ## save out
-save(AllData, file = "ignore/03_bugs_temp_joined_by_year.RData")
+save(AllData, file = "ignore/output/03_bugs_temp_joined_by_year.RData")
 
 AllDataA <- left_join(asciScoresLA, AllTempAlt, by = c("COMID", "year")) 
 head(AllDataA)
 dim(AllDataA) ## 
 
 ## save out
-save(AllDataA, file = "ignore/03_algae_temp_joined_by_year.RData")
+save(AllDataA, file = "ignore/output/03_algae_temp_joined_by_year.RData")
 
 
 # Models: CSCI ------------------------------------------------------------------
@@ -158,7 +158,7 @@ log.lm <-lapply(1:nrow(bio_h_summary), function(i)
 })
 
 ## save models
-save(log.lm, file = "output_data/03_csci_glm_currentTemp.RData")
+save(log.lm, file = "ignore/models/03_csci_glm_currentTemp.RData")
 
 ### get rsqds and pvals
 for(i in 1:length(log.lm)) {
@@ -170,7 +170,7 @@ for(i in 1:length(log.lm)) {
   bio_h_summary$n[i] <- mod$df[2]+1
 }
 ## save configs and r sqds
-save(bio_h_summary, file="output_data/03_csci_glm_rsqds.RData")
+save(bio_h_summary, file="ignore/models/03_csci_glm_rsqds.RData")
 bio_h_summary
 
 csci_coefs <- bio_h_summary
@@ -289,7 +289,6 @@ head(DF)
 MaxDFCSCI <- DF %>%
   filter(Variable == "Max_Wkl_Max_StreamT")
 
-MaxDF
 
 # Models: ASCI -----------------------------------------------------------------
 
@@ -337,7 +336,7 @@ log.lm <-lapply(1:nrow(bio_h_summary), function(i)
 })
 
 ## save models
-save(log.lm, file = "output_data/03_asci_glm_currentTemp.RData")
+save(log.lm, file = "ignore/models/03_asci_glm_currentTemp.RData")
 
 ### get rsqds and pvals
 for(i in 1:length(log.lm)) {
@@ -350,7 +349,7 @@ for(i in 1:length(log.lm)) {
   
 }
 ## save configs and r sqds
-save(bio_h_summary, file="output_data/03_asci_glm_rsqds.RData")
+save(bio_h_summary, file="ignore/models/03_asci_glm_rsqds.RData")
 bio_h_summary
 
 ascicoefs <- bio_h_summary
@@ -359,7 +358,7 @@ ascicoefs <- bio_h_summary
 
 allcoefs <- bind_rows(csci_coefs, ascicoefs)
 
-write.csv(allcoefs, "output_data/03a_model_coefs.csv")
+write.csv(allcoefs, "ignore/output/03a_model_coefs.csv")
 ## make df of predicted values to predict on - need to be different for each temp metric
 
 ## blank df
@@ -480,7 +479,7 @@ MaxDFASCI
 
 MaxDF <- rbind(MaxDFASCI, MaxDFCSCI)
 
-write.csv(MaxDF, "ignore/03_probs_per_temp.csv")
+write.csv(MaxDF, "ignore/output/03_probs_per_temp.csv")
 
 
 # Alteration models: CSCI -------------------------------------------------
@@ -538,7 +537,7 @@ write.csv(MaxDF, "ignore/03_probs_per_temp.csv")
   
 
   ## save models
-  save(log.glm, file = "output_data/03_csci_glm_altered.RData")
+  save(log.glm, file = "ignore/models03_csci_glm_altered.RData")
 
   ### get rsqds and pvals
   for(i in 1:length(log.glm)) {
@@ -550,7 +549,7 @@ write.csv(MaxDF, "ignore/03_probs_per_temp.csv")
     # mod
   }
   ## save configs and r sqds
-  save(bio_h_summary, file="output_data/03_csci_altered_glm_rsqds.RData")
+  save(bio_h_summary, file="ignore/models/03_csci_altered_glm_rsqds.RData")
 
   
   ## make df of predicted values to predict on - need to be different for each temp metric
@@ -700,7 +699,7 @@ write.csv(MaxDF, "ignore/03_probs_per_temp.csv")
   
   
   ## save models
-  save(log.glm, file = "output_data/03_asci_glm_altered.RData")
+  save(log.glm, file = "ignore/models/03_asci_glm_altered.RData")
 
   ### get rsqds and pvals
   for(i in 1:length(log.glm)) {
@@ -712,7 +711,7 @@ write.csv(MaxDF, "ignore/03_probs_per_temp.csv")
     # mod
   }
   ## save configs and r sqds
-  save(bio_h_summary, file="output_data/03_asci_altered_glm_rsqds.RData")
+  save(bio_h_summary, file="ignore/models/03_asci_altered_glm_rsqds.RData")
 
   
   ## make df of predicted values to predict on - need to be different for each temp metric
@@ -859,7 +858,7 @@ write.csv(MaxDF, "ignore/03_probs_per_temp.csv")
   })
   
   ## save models
-  save(log.lm, file = "output_data/03_csci_glm_currentTemp_chan_eng.RData")
+  save(log.lm, file = "ignore/models/03_csci_glm_currentTemp_chan_eng.RData")
   
   ### get rsqds and pvals
   for(i in 1:length(log.lm)) {
@@ -872,7 +871,7 @@ write.csv(MaxDF, "ignore/03_probs_per_temp.csv")
     
   }
   ## save configs and r sqds
-  save(bio_h_summary, file="output_data/03_csci_glm_rsqds_chan_eng.RData")
+  save(bio_h_summary, file="ignore/models/03_csci_glm_rsqds_chan_eng.RData")
   bio_h_summary
   ## make df of predicted values to predict on - need to be different for each temp metric
   
@@ -1012,7 +1011,7 @@ for(m in 1:length(mets)) {
     })
     
     ## save models
-    save(log.lm, file = "output_data/03_asci_glm_currentTemp_chan_eng.RData")
+    save(log.lm, file = "ignore/models/03_asci_glm_currentTemp_chan_eng.RData")
     
     ### get rsqds and pvals
     for(i in 1:length(log.lm)) {
@@ -1024,7 +1023,7 @@ for(m in 1:length(mets)) {
       
     }
     ## save configs and r sqds
-    save(bio_h_summary, file="output_data/03_asci_glm_rsqds_chan_eng.RData")
+    save(bio_h_summary, file="ignore/models/03_asci_glm_rsqds_chan_eng.RData")
     bio_h_summary
     ## make df of predicted values to predict on - need to be different for each temp metric
     
@@ -1160,7 +1159,7 @@ for(m in 1:length(mets)) {
   
   
   ## save models
-  save(log.glm, file = "output_data/03_csci_glm_altered.RData")
+  save(log.glm, file = "ignore/models/03_csci_glm_altered.RData")
   
   ### get rsqds and pvals
   for(i in 1:length(log.glm)) {
@@ -1172,7 +1171,7 @@ for(m in 1:length(mets)) {
     # mod
   }
   ## save configs and r sqds
-  save(bio_h_summary, file="output_data/03_csci_altered_glm_rsqds.RData")
+  save(bio_h_summary, file="ignore/models/03_csci_altered_glm_rsqds.RData")
   
   
   ## make df of predicted values to predict on - need to be different for each temp metric
@@ -1322,7 +1321,7 @@ for(m in 1:length(mets)) {
   
   
   ## save models
-  save(log.glm, file = "output_data/03_asci_glm_altered.RData")
+  save(log.glm, file = "ignore/models/03_asci_glm_altered.RData")
   
   ### get rsqds and pvals
   for(i in 1:length(log.glm)) {
@@ -1334,7 +1333,7 @@ for(m in 1:length(mets)) {
     # mod
   }
   ## save configs and r sqds
-  save(bio_h_summary, file="output_data/03_asci_altered_glm_rsqds.RData")
+  save(bio_h_summary, file="ignore/models/03_asci_altered_glm_rsqds.RData")
   
   
   ## make df of predicted values to predict on - need to be different for each temp metric

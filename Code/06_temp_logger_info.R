@@ -60,30 +60,5 @@ head(df)
 
 # Map ---------------------------------------------------------------------
 
-## make spatial
-
-dfSp <- df %>%
-  drop_na(Latitude) %>%
-  st_as_sf(coords=c("Longitude", "Latitude"), crs=4326, remove=F) 
-
-## map of all sites in state
-# set background basemaps:
-basemapsList <- c("Esri.WorldTopoMap", "Esri.WorldImagery",
-                  "Esri.NatGeoWorldMap",
-                  "OpenTopoMap", "OpenStreetMap", 
-                  "CartoDB.Positron", "Stamen.TopOSMFeatures")
-
-mapviewOptions(basemaps=basemapsList, fgb = FALSE)
-
-
-
-# this map of all sites in same HUC 12
-m1 <- mapview(dfSp, cex=2, col.regions=c("red"),
-              layer.name="Temp Sites") 
-
-
-m1
-# m1@map %>% leaflet::addMeasure(primaryLengthUnit = "meters")
-
-mapshot(m1, url = paste0(getwd(), "/output_data/01_bio_sites_socal_counties_mapview.html"),
-        file = paste0(getwd(), "/ignore/01_bio_sites_socal_counties_mapview.png"))
+## map done externally and lives - https://sccwrp.sharepoint.com/:f:/s/TempModelling/Erqgm8fSBJZHh78Qdd2klu8BCHfdjS3tC01TzULkhBGt2g?e=JBc4Ux
+# temperature modelling teams channel

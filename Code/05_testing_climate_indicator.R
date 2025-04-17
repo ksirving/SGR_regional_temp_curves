@@ -6,12 +6,12 @@ library(tidylog)
 library(tidyverse)
 library(sf)
 
-out.dir <- "/Users/katieirving/OneDrive - SCCWRP/Documents - Katie’s MacBook Pro/git/SGR_Temp_Benthic_v2/Figures/"
+out.dir <- "Figures/"
 
 # Temp data ---------------------------------------------------------------
 
 ## modelled current data
-load("/Users/katieirving/OneDrive - SCCWRP/Documents - Katie’s MacBook Pro/Projects/San_Gabriel_Temp/Data/AirTemp/Modeling/baseline_stream_temp.RData")
+load(file = "ignore/baseline_stream_temp.RData")
 
 # baseline_stream_tempx <- baseline_stream_temp %>% 
 #   ungroup() %>%

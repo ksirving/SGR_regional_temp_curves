@@ -1,15 +1,15 @@
 ## model exploration
 
-library(tidylog)
 library(tidyverse)
 library(sf)
+library(tidylog)
 
-out.dir <- "/Users/katieirving/OneDrive - SCCWRP/Documents - Katie’s MacBook Pro/git/SGR_Temp_Benthic_v2/Figures/"
+out.dir <- "Figures/"
 
 # Temp data ---------------------------------------------------------------
 
 ## modelled current data
-load("/Users/katieirving/OneDrive - SCCWRP/Documents - Katie’s MacBook Pro/Projects/San_Gabriel_Temp/Data/AirTemp/Modeling/baseline_stream_temp.RData")
+load(file = "ignore/baseline_stream_temp.RData")
 
 # baseline_stream_tempx <- baseline_stream_temp %>% 
 #   ungroup() %>%
@@ -30,7 +30,7 @@ head(baseline_stream_temp)
 
 # alteration
 
-load(file = "ignore/02_cur_temp_alt_mets.RData")
+load(file = "ignore/output/02_cur_temp_alt_mets.RData")
 head(AllTempAlt)
 
 ## convert to fahrenheit
@@ -50,7 +50,7 @@ length(unique(oe_ca$otu))
 dim(oe_ca)
 ## bug data
 
-bugs2 <- st_read("output_data/01_bio_sites_all.shp")
+bugs2 <- st_read("ignore/output/01_bio_sites_all.shp")
 head(bugs2)
 dim(bugs2)
 
@@ -66,7 +66,7 @@ capLAC
 
 ## uplaod traits EPA
 
-traitsUSA <- read.csv("/Users/katieirving/OneDrive - SCCWRP/Documents - Katie’s MacBook Pro/git/SGR_Temp_Benthic/ignore/FreshwaterBioTraits_20100927.csv")
+traitsUSA <- read.csv("ignore/FreshwaterBioTraits_20100927.csv")
 head(traitsUSA)
 length(unique(traitsUSA$TAXON))
 
@@ -210,8 +210,8 @@ ggsave(c2, filename=file.name1, dpi=300, height=5, width=7.5)
 
 
 ## save out
-write.csv(oe, "output_data/03_ObsExp_all_CA.csv")
-write.csv(oeCats, "output_data/03_ObsExp_traits_all_CA.csv")
+write.csv(oe, "ignore/output/03_ObsExp_all_CA.csv")
+write.csv(oeCats, "ignore/output/03_ObsExp_traits_all_CA.csv")
 
 # Join with Temp ----------------------------------------------------------
 
@@ -344,7 +344,7 @@ talTraits <-  AllDatac %>%
 
 talTraits
 
-names(AllDataLong2)
+# names(AllDataLong2)
 ## make quadratic terms
 AllDataLong2 <- AllDatac %>%
   group_by(CurMetric, TRAITS_NAME, CatTraits) %>%
@@ -408,8 +408,8 @@ quad.lm <-lapply(1:nrow(bio_h_summary), function(i)
 bio_h_summary
 quad.lm 
 ## save models
-save(quad.lm, file = "output_data/03_csci_traits_mods_lm_quad.RData")
-load(file = "output_data/03_csci_traits_mods_lm_quad.RData")
+save(quad.lm, file = "ignore/models/03_csci_traits_mods_lm_quad.RData")
+load(file = "ignore/models/03_csci_traits_mods_lm_quad.RData")
 ## function to get p value from lm 
 lmp <- function (modelobject) {
   if (class(modelobject) != "lm") stop("Not an object of class 'lm' ")
@@ -430,9 +430,9 @@ for(i in 1:length(quad.lm)) {
   
 }
 ## save configs and r sqds
-save(bio_h_summary, file="output_data/03_asci_component_mods_quadLM_rsqds.RData")
+save(bio_h_summary, file="ignore/output/03_asci_component_mods_quadLM_rsqds.RData")
 
-load(file="output_data/03_asci_component_mods_quadLM_rsqds.RData")
+load(file="ignore/output/03_asci_component_mods_quadLM_rsqds.RData")
 bio_h_summary
 ## make df of predicted values to predict on - need to be different for each temp metric
 
@@ -477,9 +477,9 @@ for(i in 1:length(quad.lm)) {
 }
 unique(DF$BioCat)
 ## save predicted values
-save(DF, file="output_data/03_csci_traits_QuadLM_predVals.RData")
+save(DF, file="ignore/output/03_csci_traits_QuadLM_predVals.RData")
 
-load(file="output_data/03_csci_traits_QuadLM_predVals.RData")
+load(file="ignore/output/03_csci_traits_QuadLM_predVals.RData")
 
 ### predicted figures
 
@@ -629,7 +629,7 @@ for(m in 1:length(mets)) {
 
 
 # Temperature alteration --------------------------------------------------
-
+head(AllDatac)
 
 ### get only mean weekly temp and median annual temp - the closest match, but needs improved
 AllDataAltSub <- AllDatac %>%

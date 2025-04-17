@@ -7,7 +7,7 @@ library(sf)
 
 # Bio data ----------------------------------------------------------------
 
-out.dir <- "/Users/katieirving/OneDrive - SCCWRP/Documents - Katie’s MacBook Pro/git/SGR_Temp_Benthic_v2/Figures/"
+out.dir <- "Figures/"
 ## workflow
 ## join csci with temp data, match years
 ## models with tolerant/senstivie taxa
@@ -17,7 +17,7 @@ out.dir <- "/Users/katieirving/OneDrive - SCCWRP/Documents - Katie’s MacBook P
 
 ## LA county temp data
 
-load(file = "ignore/02_cur_temp_alt_mets.RData")
+load(file = "ignore/output/02_cur_temp_alt_mets.RData")
 
 head(AllTempAlt)
 
@@ -27,17 +27,17 @@ length(TempSites)
 
 ## bugs - sites only
 
-bugSites <- st_read("output_data/01_bio_sites_all.shp")
+bugSites <- st_read("ignore/output/01_bio_sites_all.shp")
 head(bugSites)
 
 ## bugs data
 
-csciScores <- read.csv("ignore/01_csci_comp_mets_comid_socal.csv")
+csciScores <- read.csv("ignore/output/01_csci_comp_mets_comid_socal.csv")
 head(csciScores)
 
 ### algae scores
 
-asciScores <- read.csv("ignore/01_asci_comp_mets_comid_socal.csv")
+asciScores <- read.csv("ignore/output/01_asci_comp_mets_comid_socal.csv")
 head(asciScores)
 
 
@@ -320,7 +320,7 @@ for(m in 1:length(mets)) {
   
   T1
   
-  file.name1 <- paste0(out.dir, "03a_", mets[m], "_asci_ONLY_temp_response_observed.jpg")
+  file.name1 <- paste0(out.dir, "03_", mets[m], "_asci_ONLY_temp_response_observed.jpg")
   ggsave(T1, filename=file.name1, dpi=300, height=5, width=7.5)
 }
 
